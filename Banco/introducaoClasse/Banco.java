@@ -1,79 +1,42 @@
 import javax.swing.JOptionPane;
+import java.util.HashMap;
 
 public class Banco {
-    private String nome;
-    private String nomeUsuario;
-    private double saldo;
-
-    // Construtor: inicializar os valores inicais do objeto.
-    public Banco(String nome, String nomeUsuario, double saldoInicial) {
-        setNome(nome);
-        setNomeUsuario(nomeUsuario);
-        setSaldo(saldoInicial); // Define o saldo inicial do banco.
-    }
-
+    private HashMap<Integer, Conta> contas;
+    
     /*
-     * Métodos: ações que o objeto pode realizar.
-     * Getters: obter o valor de um atributo.
-     * Setters: alterar o valor de um atributo.
+     * HashMap: cada chave é única e está associado a um valor correspondente
     */
 
-    public void exibirSaldo() {
-        JOptionPane.showMessageDialog(null, "Usuário: " + getNomeUsuario() +"\nNome do banco: " +
-        getNome() + "\nSaldo: R$ " + getSaldo(), "Saldo", JOptionPane.INFORMATION_MESSAGE);
+    public Banco() {
+        this.contas = new HashMap<>();
     }
 
-    public String getNome() {
-        return this.nome;
+    public void adicionarConta(Conta conta) {
+        contas.put(conta.getNumeroConta(), conta); // Adiciona a conta ao HashMap usando o número da conta como chave
     }
 
-    // Validação do nome do banco. Se for nulo ou vazio, lança uma exceção.
-    public void setNome(String nome) {
-        if (nome == null || nome.isEmpty()) {
-            throw new IllegalArgumentException("Nome inválido!");
+    public Conta buscarConta(int numeroConta) {
+        return contas.get(numeroConta);
+    }
+
+    public boolean transferir(int origem, int destino, double valor) {
+        Conta contaOrigem = contas.get(origem);
+        Conta contaDestino = contas.get(destino);
+
+        while (true) {
+            if (contaOrigem != null && contaDestino != null) {
+                try {
+                    contaOrigem.sacar(valor); // Tenta sacar o valor da conta de origem
+                    contaDestino.depositar(valor); // Deposita o valor na conta de destino
+                    contaOrigem.registrarExtrato("Transferência de R$" + valor + " para conta " + destino);
+                    contaDestino.registrarExtrato("Recebido R$" + valor + " de conta " + origem);
+                    return true; // Retorna verdadeiro se a transferência for bem-sucedida
+                } catch (IllegalArgumentException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         }
-        this.nome = nome;
-    }
-
-    public String getNomeUsuario() {
-        return this.nomeUsuario;
-    }
-
-    // Validação do nome do usuário. Se for nulo ou vazio, lança uma exceção.
-    public void setNomeUsuario(String nomeUsuario) {
-        if (nomeUsuario == null || nomeUsuario.isEmpty()) {
-            throw new IllegalArgumentException("Nome de usuário inválido!");
-        }
-        this.nomeUsuario = nomeUsuario;
-    }
-
-    // Validação do saque. Se for maior que o saldo, lança uma exceção.
-    public void sacar(double saque) {
-        if (saque > this.saldo) {
-            throw new IllegalArgumentException("Saldo insuficiente!");
-        }
-        else if (saque <= 0) {
-            throw new IllegalArgumentException("Valor inválido!");
-        }
-        this.saldo -= saque;
-    }
-
-    // Validação do depósito. Se for menor ou igual a zero, lança uma exceção
-    public void depositar(double deposito) {
-        if (deposito <= 0) {
-            throw new IllegalArgumentException("Valor inválido!");
-        }
-        this.saldo += deposito;
-    }
-
-    public double getSaldo() {
-        return this.saldo;
-    }
-
-    public void setSaldo(double saldo) {
-        if (saldo < 0) { // Permite saldo inicial zero.
-            throw new IllegalArgumentException("Valor inválido!");
-        }
-        this.saldo = saldo;
     }
 }
