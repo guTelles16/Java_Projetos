@@ -2,39 +2,97 @@ import javax.swing.JOptionPane;
 
 public class Main {
     public static void main (String[] args) {
-        Conta conta = null; // Inicializa o objeto banco, mas somente se os inputs forem bem-sucedidos.
+        Banco banco = null; // Inicializa o objeto banco, mas somente se os inputs forem bem-sucedidos.
         
         // Loop para garantir o input correto do usuário.
-        while (conta == null) {
-            try{
-                String nome = obterEntrada("Digite o nome do banco:");
-                String cpf = obterEntrada("Digite o seu nome:");
+        while (true) {
+            try {
+                int opcao = JOptionPane.showOptionDialog(null, "Que operação deseja realizar?", "Banco", 
+                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, 
+                new Object[]{"Criar Conta", "Depositar", "Sacar", "Transferir", "Exibir Saldo", "Ver Extrato", "Sair"}, "Sair");
 
-                Number numeroConta = obterValorNumerico("Digite o número da conta:");
-                if (numeroConta == null) OperationCanceledException(); // Se o usuário cancelar a entrada, encerra o programama.
-
-                conta = new Conta(nome, cpf, numeroConta);
-
-                // Loop para exibir o menu de opções.
-                while (true) {
-                    int opcao = JOptionPane.showOptionDialog(null, "Escolha uma opção:", "Banco", 
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, 
-                        new Object[]{"Sacar", "Depositar", "Exibir Saldo", "Sair"}, "Sair");
-
-                    if (opcao == 0) { // Sacar
-                        Number valor = obterValorNumerico("Digite o valor do saque:");
-                        if (valor == null) continue; // Se o usuário cancelar a entrada, volta ao menu.
-                        conta.sacar(valor);
-                    } else if (opcao == 1) { // Depositar
-                        Number valor = obterValorNumerico("Digite o valor do depósito:");
-                        if (valor == null) continue;
-                        conta.depositar(valor);
-                    } else if (opcao == 2) { // Exibir Saldo
-                        conta.exibirSaldo();
-                    } else { // Sair
-                        JOptionPane.showMessageDialog(null, "Saindo do sistema...");
-                        return; // Encerra o programa.
+                if (opcao == 0) { // Criar Conta}
+                    String nome = obterEntrada("Nome:");
+                    String cpf = obterEntrada("CPF:");
+            
+                    Number numeroConta = obterValorNumerico("Número da conta:");
+                
+                    if (numeroConta == null) {
+                        OperationCanceledException e = new OperationCanceledException("Entrada cancelada!");
+                        JOptionPane.showMessageDialog(null, "Aviso: " + e.getMessage(),
+                            "Aviso", JOptionPane.WARNING_MESSAGE);
+                        continue; // Se o usuário cancelar a entrada, volta ao menu
+                    } else if (numeroConta instanceof Double){
+                        JOptionPane.showMessageDialog(null, "Número da conta inválido!",
+                            "Erro", JOptionPane.ERROR_MESSAGE);
+                        continue;
+                    } else {
+                        int inteiro = (Integer) numeroConta;
                     }
+
+                    banco.adicionarConta(new Conta(nome, cpf, numeroConta));
+                    JOptionPane.showMessageDialog(null, "Conta criada com sucesso!");
+                } 
+                else if (opcao == 1) { // Depositar
+                    Number contaDeposito = obterValorNumerico("Numero da conta de depósito:");
+                    
+                    if (contaDeposito == null) {
+                        OperationCanceledException e = new OperationCanceledException("Entrada cancelada!");
+                        JOptionPane.showMessageDialog(null, "Aviso: " + e.getMessage(),
+                            "Aviso", JOptionPane.WARNING_MESSAGE);
+                        continue;
+                    } else if (contaDeposito instanceof Double) {
+                        JOptionPane.showMessageDialog(null, "Número da conta inválido!", 
+                            "Erro", JOptionPane.ERROR_MESSAGE);
+                        continue;
+                    } else {
+                        int inteiro = (Integer) contaDeposito;
+                    }
+                
+                    Number valor = obterValorNumerico("Valor do depósito:");
+                    
+                    if (valor == null) {
+                        OperationCanceledException e = new OperationCanceledException("Entrada cancelada!");
+                        JOptionPane.showMessageDialog(null, "Aviso: " + e.getMessage(),
+                            "Aviso", JOptionPane.WARNING_MESSAGE);
+                        continue;
+                    } else if (valor instanceof Integer) {
+                        int inteiro = (Integer) valor;
+                        continue;
+                    } else {
+                        double decimal = (Double) valor;
+                    }
+
+                    Conta conta = depositar(valor);
+                } else if (opcao == 2) { // Sacar
+                    Number contaSaque = obterValorNumerico("Número da conta de depósito:");
+
+                    if (contaSaque == null) {
+                        OperationCanceledException e = new OperationCanceledException("Entrada cancelada!");
+                        JOptionPane.showMessageDialog(null, "Aviso: " + e.getMessage(),
+                            "Aviso", JOptionPane.WARNING_MESSAGE);
+                            continue;
+                    } else if (contaSaque instanceof Double) {
+                        JOptionPane.showMessageDialog(null, "Número da conta inválido!",
+                            "Erro", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        int inteiro = (Integer) contaSaque;
+                    }
+
+                    Number valor = obterValorNumerico("Digite o valor do saque:");
+                    
+                    if (valor == null) {
+                        OperationCanceledException e = new OperationCanceledException("Entrada cancelada!");
+                        JOptionPane.showMessageDialog(null, "Aviso: " + e.getMessage(),
+                            "Aviso", JOptionPane.WARNING_MESSAGE);
+                        continue;
+                    } else if (valor instanceof Integer) {
+                        int inteiro = (Integer) valor;
+                    } else {
+                        double decimal = (Double) valor;
+                    } 
+
+                    Conta conta.sacar(valor);
                 }
 
              // Captura as exceções e exibe uma mensagem de erro. 
@@ -47,24 +105,25 @@ public class Main {
         }
     }
 
-    // Métodos auxiliares para obter entrada de dados do usuário.
+    // Métodos auxiliares para obter entrada de dados do usuário
     private static String obterEntrada(String mensagem) {
         String input;
-        // Executa o loop enquanto a entrada for nula ou vazia. Se não for, retorna a entrada.
+        // Executa o loop enquanto a entrada for nula ou vazia. Se não for, retorna a entrada
         while (true) {
             try {
                 input = JOptionPane.showInputDialog(mensagem);
-                if (input == null) { // Se o uauário cancelar a entrada, exibe uma mensagem e encerra o programa.
+                if (input == null) { // Se o usuário cancelar a entrada, exibe uma mensagem e encerra o programa
                     JOptionPane.showMessageDialog(null, "Entrada cancelada!",
                     "Aviso", JOptionPane.WARNING_MESSAGE);
                     System.exit(0); // Encerra o programa
                 } else if (input.trim().isEmpty()) { // Verifica se a entrada é vazia ou só tem espaços
                     JOptionPane.showMessageDialog(null, "O campo não pode ser vazio!",
                     "Erro", JOptionPane.ERROR_MESSAGE);
-                    continue; // Continua o loop para solicitar novamente a entrada  
+                    continue; // Continua o loop para solicitar novamente a entrada
                 } else {
                     return input;
                 }
+                
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null,"Preencha o campo corretamente!",
                 "Erro", JOptionPane.ERROR_MESSAGE);
@@ -73,16 +132,12 @@ public class Main {
     }
 
     private static Number obterValorNumerico(String mensagem) {
-        while (true) { // Loop para garantir que o usuário digite um valor numérico válido.
+        while (true) { // Loop para garantir que o usuário digite um valor numérico válido
             try {
                 String input = JOptionPane.showInputDialog(mensagem);
-                if (input == null) {
-                    JOptionPane.showMessageDialog(null, "Entrada cancelada!",
-                    "Aviso", JOptionPane.WARNING_MESSAGE);
-                    throw new OperationCanceledException(); // Retorna um valor inválido para indicar o cancelamento.
-                } else if (input.trim().isEmpty()) {
+                if (input.trim().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "O campo não pode ser vazio!",
-                    "Erro", JOptionPane.ERROR_MESSAGE);
+                        "Erro", JOptionPane.ERROR_MESSAGE);
                     continue;
                 } else {
                     double numero = Double.parseDouble(input);
@@ -94,17 +149,18 @@ public class Main {
                         return numero; // Retorna como double
                     }
                 }
+
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Digite um valor númerico válido!",
-                "Erro", JOptionPane.ERROR_MESSAGE);
+                    "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private static class OperationCanceledException extends Exception {
-        public OperationCanceledException() {
-            super("Operação cancelada pelo usuário!");
-            System.exit(0); 
+    // Exceção personalizada para entrada cancelada
+    public class OperationCanceledException extends Exception {
+        public OperationCanceledException(String mensagem) {
+            super(mensagem);
         }
     }
 }

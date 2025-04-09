@@ -59,10 +59,11 @@ public class Conta {
 
     // Validação do número da conta. Se for menor ou igual a zero, lança uma exceção
     public void setNumeroConta(Number numeroConta) {
-        if (numeroConta <= 0) {
+        int numeroContaInt = numeroConta.intValue();
+        if (numeroContaInt <= 0) {
             throw new IllegalArgumentException("Número da conta inválido!");
         }
-        this.numeroConta = numeroConta;
+        this.numeroConta = numeroContaInt;
     }
 
     public Number getSaldo() {
@@ -71,35 +72,48 @@ public class Conta {
 
     // Permite saldo inicial zero.
     public void setSaldo(Number saldo) {
-        if (saldo < 0) {
+        double saldoDouble = saldo.doubleValue();
+        if (saldoDouble < 0) {
             throw new IllegalArgumentException("Valor inválido!");
         }
-        this.saldo = saldo;
+        this.saldo = saldoDouble;
     }
 
     // Validação do saque. Se for maior que o saldo, lança uma exceção.
     public boolean sacar(Number valor) {
-        if (valor > this.saldo) {
+        double valorDouble = valor.doubleValue();
+        if (valorDouble > this.saldo.doubleValue()) {
             throw new IllegalArgumentException("Saldo insuficiente!");
         }
-        else if (valor <= 0) {
+        else if (valorDouble <= 0) {
             throw new IllegalArgumentException("Valor inválido!");
         }
-        this.saldo -= valor;
-        extrato.add("Saque de R$" + valor);
+        this.saldo -= valorDouble;
+        extrato.add("Saque de R$" + valorDouble);
         return true; // Retorna verdadeiro se o saque for bem-sucedido
     }
 
     // Validação do depósito. Se for menor ou igual a zero, lança uma exceção
     public void depositar(Number valor) {
-        if (valor <= 0) {
+        double valorDouble = valor.doubleValue();
+        if (valorDouble <= 0) {
             throw new IllegalArgumentException("Valor inválido!");
         }
-        this.saldo += valor;
-        extrato.add("Depósito de R$" + valor);
+        this.saldo += valorDouble;
+        extrato.add("Depósito de R$" + valorDouble);
     }
 
+    // Adiciona uma operação ao extrato da conta
     public void registrarExtrato(String operacao) {
         extrato.add(operacao); //
+    }
+
+    // Exibe o extrato da conta
+    public String verExtrato() {
+        StringBuilder sb = new StringBuilder("Extrato da conta " + getNumeroConta() + ":\n");
+        for (String linha: extrato) {
+            sb.append(linha).append("\n"); // Adiciona cada linha do extrato ao StringBuilder
+        }
+        return sb.toString(); // Retorna o extrato formatado como uma string
     }
 }
