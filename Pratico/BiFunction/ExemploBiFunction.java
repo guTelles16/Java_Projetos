@@ -1,4 +1,4 @@
-package Pratico.BiFunction;
+package BiFunction;
 
 import javax.swing.JOptionPane;
 import java.util.function.BiFunction;

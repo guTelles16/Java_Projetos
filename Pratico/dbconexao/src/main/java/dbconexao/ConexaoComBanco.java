@@ -1,16 +1,25 @@
+package dbconexao;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.SQLException;
+import java.sql.SQLException;;
 
 public class ConexaoComBanco {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // Variáveis de conexão
-        String url = "jdbc:mysql://localhost:3306/DB_Conexao";
-        String usuario = "root";
-        // String senha; // Senha do banco de dados, se necessário
+        String url = System.getenv("DB_URL");
+        String usuario = System.getenv("DB_USER");
+        String senha = System.getenv("DB_PASSWORD");
 
+        // Verificação do driver JDBC
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new Exception("Driver JDBC não encontrado: " + e.getMessage());
+        }
+        
         // Tentativa de conexão
         try (Connection conexao = DriverManager.getConnection(url, usuario, senha)) {
             System.out.println("Conectado com sucesso ao banco de dados!");
@@ -25,7 +34,7 @@ public class ConexaoComBanco {
 
             // Inserir dados na tabela
             String sqlInserir = "INSERT INTO usuarios (nome, email) VALUES (?, ?)";
-            PreparedStatement stmtInserir = conexao.PreparedStatement(sqlInserir);
+            PreparedStatement stmtInserir = conexao.prepareStatement(sqlInserir);
             stmtInserir.setString(1, "Bruno");
             stmtInserir.setString(2, "teste@email.com");
             stmtInserir.executeUpdate();
@@ -33,7 +42,7 @@ public class ConexaoComBanco {
 
             // Consultar dados na tabela
             String sqlSelect = "SELECT * FROM usuarios";
-            ResultSet resultados = conexao.createStatement().executeQuery(sqlInserir);
+            ResultSet resultados = conexao.createStatement().executeQuery(sqlSelect);
 
             // Exibir os resultados
             while (resultados.next()) {
@@ -45,8 +54,11 @@ public class ConexaoComBanco {
             }
 
         // Captura de exceções de SQL
-        } catch (java.sql.SQLException e) {
-            System.out.println("Erro ao conectar ou executar comandos: " + e.getMessage());
+        } catch (SQLException e) {
+            throw new Exception("Erro no banco de dados: " + e.getMessage());
+        
+        } catch (Exception e) {
+            throw new Exception("Erro: " + e.getMessage());
         }
     }
 }

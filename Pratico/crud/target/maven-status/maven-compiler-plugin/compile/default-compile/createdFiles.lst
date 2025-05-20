@@ -1,0 +1,4 @@
+crud\ConexaoBanco.class
+crud\Pessoa.class
+crud\PessoaDAO.class
+crud\Main.class
