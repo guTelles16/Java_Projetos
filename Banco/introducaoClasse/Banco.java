@@ -1,3 +1,5 @@
+package Banco.introducaoClasse;
+
 import javax.swing.JOptionPane;
 import java.util.HashMap;
 
@@ -16,33 +18,35 @@ public class Banco {
         contas.put(conta.getNumeroConta(), conta); // Adiciona a conta ao HashMap usando o número da conta como chave
     }
 
-    public Conta buscarConta(Number numeroConta) {
+    public Conta buscarConta(int numeroConta) {
         return contas.get(numeroConta);
     }
 
-    public boolean transferir(Number origem, Number destino, Number valor) {
-        int origemInt = origem.intValue();
-        int destinoInt = destino.intValue();
-        
-        double valorDouble = valor.doubleValue();
-        
-        Conta contaOrigem = contas.get(origemInt);
-        Conta contaDestino = contas.get(destinoInt);
+    public boolean transferir(int origem, int destino, double valor) {
+        Conta contaOrigem = contas.get(origem);
+        Conta contaDestino = contas.get(destino);
 
-        while (true) {
-            if (contaOrigem != null && contaDestino != null) {
-                try {
-                    contaOrigem.sacar(valorDouble); // Tenta sacar o valor da conta de origem
-                    contaDestino.depositar(valorDouble); // Deposita o valor na conta de destino
-                    contaOrigem.registrarExtrato("Transferência de R$" + valorDouble + " para conta " + destinoInt);
-                    contaDestino.registrarExtrato("Recebido R$" + valorDouble + " de conta " + origemInt);
-                    return true; // Retorna verdadeiro se a transferência for bem-sucedida
+        if (contaOrigem == null && contaDestino == null) {
+            JOptionPane.showMessageDialog(null, "Conta de origem ou destino não encontrada!", 
+                "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
 
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(null, "Erro ao transferir: " + e.getMessage(),
-                    "Erro", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+        if (valor <= 0) {
+            JOptionPane.showMessageDialog(null, "Valor inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        try {
+            contaOrigem.sacar(valor); // Tenta sacar o valor da conta de origem
+            contaDestino.depositar(valor); // Deposita o valor na conta de destino
+            contaOrigem.registrarExtrato("Transferência de R$" + valor + " para conta " + destino);
+            contaDestino.registrarExtrato("Recebido R$" + valor + " de conta " + origem);
+            return true; // Retorna verdadeiro se a transferência for bem-sucedida
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao transferir: " + e.getMessage(),
+                 "Erro", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
     }
 }

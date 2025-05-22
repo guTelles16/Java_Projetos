@@ -1,15 +1,17 @@
+package Banco.introducaoClasse;
+
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 
 public class Conta {
     private String nome;
     private String cpf;
-    private Number numeroConta;
-    private Number saldo;
+    private int numeroConta;
+    private double saldo;
     private ArrayList<String> extrato;
 
     // Construtor: inicializar os valores inicais do objeto
-    public Conta(String nome, String cpf, Number numeroConta) {
+    public Conta(String nome, String cpf, int numeroConta) {
         setNome(nome);
         setCpf(cpf);
         setNumeroConta(numeroConta);
@@ -23,10 +25,10 @@ public class Conta {
      * Setters: alterar o valor de um atributo.
     */
 
-    public void exibirSaldo() {
+    public void exibirConta() {
         JOptionPane.showMessageDialog(null, "Cliente: " + getNome() +"\nCPF: " +
-        getCpf() + "\nNúmero da conta: " + getNumeroConta() + "\nSaldo: " + getSaldo(),
-        "Saldo", JOptionPane.INFORMATION_MESSAGE);
+            getCpf() + "\nNúmero da conta: " + getNumeroConta() + "\nSaldo: " + getSaldo(),
+            "Informações da Conta", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public String getNome() {
@@ -53,54 +55,50 @@ public class Conta {
         this.cpf = cpf;
     }
 
-    public Number getNumeroConta() {
+    public int getNumeroConta() {
         return this.numeroConta;
     }
 
     // Validação do número da conta. Se for menor ou igual a zero, lança uma exceção
-    public void setNumeroConta(Number numeroConta) {
-        int numeroContaInt = numeroConta.intValue();
-        if (numeroContaInt <= 0) {
+    public void setNumeroConta(int numeroConta) {
+        if (numeroConta <= 0) {
             throw new IllegalArgumentException("Número da conta inválido!");
         }
-        this.numeroConta = numeroContaInt;
+        this.numeroConta = numeroConta;
     }
 
-    public Number getSaldo() {
+    public double getSaldo() {
         return this.saldo;
     }
 
     // Permite saldo inicial zero.
-    public void setSaldo(Number saldo) {
-        double saldoDouble = saldo.doubleValue();
-        if (saldoDouble < 0) {
-            throw new IllegalArgumentException("Valor inválido!");
+    public void setSaldo(double saldo) {;
+        if (saldo < 0) {
+            throw new IllegalArgumentException("Saldo inválido!");
         }
-        this.saldo = saldoDouble;
+        this.saldo = saldo;
     }
 
     // Validação do saque. Se for maior que o saldo, lança uma exceção.
-    public boolean sacar(Number valor) {
-        double valorDouble = valor.doubleValue();
-        if (valorDouble > this.saldo.doubleValue()) {
+    public boolean sacar(double valor) {
+        if (valor > this.saldo) {
             throw new IllegalArgumentException("Saldo insuficiente!");
         }
-        else if (valorDouble <= 0) {
+        else if (valor <= 0) {
             throw new IllegalArgumentException("Valor inválido!");
         }
-        this.saldo -= valorDouble;
-        extrato.add("Saque de R$" + valorDouble);
+        this.saldo -= valor;
+        extrato.add("Saque de R$" + valor);
         return true; // Retorna verdadeiro se o saque for bem-sucedido
     }
 
     // Validação do depósito. Se for menor ou igual a zero, lança uma exceção
-    public void depositar(Number valor) {
-        double valorDouble = valor.doubleValue();
-        if (valorDouble <= 0) {
+    public void depositar(double valor) {
+        if (valor <= 0) {
             throw new IllegalArgumentException("Valor inválido!");
         }
-        this.saldo += valorDouble;
-        extrato.add("Depósito de R$" + valorDouble);
+        this.saldo += valor;
+        extrato.add("Depósito de R$" + valor);
     }
 
     // Adiciona uma operação ao extrato da conta
