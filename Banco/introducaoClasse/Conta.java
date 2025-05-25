@@ -15,7 +15,7 @@ public class Conta {
         setNome(nome);
         setCpf(cpf);
         setNumeroConta(numeroConta);
-        setSaldo(0); // Define o saldo 0 na conta
+        this.saldo = 0; // Saldo inicial é 0
         this.extrato = new ArrayList<>(); // Inicializa o extrato como uma lista vazia
     }
 
@@ -32,7 +32,7 @@ public class Conta {
     }
 
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     // Validação do nome do cliente. Se for nulo ou vazio, lança uma exceção.
@@ -44,19 +44,19 @@ public class Conta {
     }
 
     public String getCpf() {
-        return this.cpf;
+        return cpf;
     }
 
     // Validação de CPF. Se for nulo ou vazio, lança uma exceção.
     public void setCpf(String cpf) {
         if (cpf == null || cpf.isEmpty()) {
-            throw new IllegalArgumentException("Nome de usuário inválido!");
+            throw new IllegalArgumentException("CPF inválido!");
         }
         this.cpf = cpf;
     }
 
     public int getNumeroConta() {
-        return this.numeroConta;
+        return numeroConta;
     }
 
     // Validação do número da conta. Se for menor ou igual a zero, lança uma exceção
@@ -68,37 +68,29 @@ public class Conta {
     }
 
     public double getSaldo() {
-        return this.saldo;
-    }
-
-    // Permite saldo inicial zero.
-    public void setSaldo(double saldo) {;
-        if (saldo < 0) {
-            throw new IllegalArgumentException("Saldo inválido!");
-        }
-        this.saldo = saldo;
+        return saldo;
     }
 
     // Validação do saque. Se for maior que o saldo, lança uma exceção.
     public boolean sacar(double valor) {
-        if (valor > this.saldo) {
-            throw new IllegalArgumentException("Saldo insuficiente!");
-        }
-        else if (valor <= 0) {
-            throw new IllegalArgumentException("Valor inválido!");
-        }
-        this.saldo -= valor;
-        extrato.add("Saque de R$" + valor);
-        return true; // Retorna verdadeiro se o saque for bem-sucedido
+        if (valor > 0 && valor <= saldo) {;
+            saldo -= valor;
+            extrato.add("Saque de R$" + valor);
+            return true;
+        } else {
+            throw new IllegalArgumentException("Valor inválido ou saldo insuficiente!");
+        } 
     }
 
     // Validação do depósito. Se for menor ou igual a zero, lança uma exceção
-    public void depositar(double valor) {
-        if (valor <= 0) {
-            throw new IllegalArgumentException("Valor inválido!");
+    public boolean depositar(double valor) {
+        if (valor > 0) {
+            saldo += valor;
+            extrato.add("Depósito de R$" + valor);
+            return true;
+        } else {
+            throw new IllegalArgumentException("Valor inválido para deposito!");
         }
-        this.saldo += valor;
-        extrato.add("Depósito de R$" + valor);
     }
 
     // Adiciona uma operação ao extrato da conta
