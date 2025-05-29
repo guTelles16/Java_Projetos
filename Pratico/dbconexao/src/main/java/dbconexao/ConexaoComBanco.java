@@ -10,18 +10,24 @@ public class ConexaoComBanco {
     public static void main(String[] args) throws Exception {
         // Variáveis de conexão
         String url = System.getenv("DB_URL");
-        String usuario = System.getenv("DB_USER");
-        String senha = System.getenv("DB_PASSWORD");
+        String user = System.getenv("DB_USER");
+        String password = System.getenv("DB_PASSWORD");    
 
-        // Verificação do driver JDBC
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new Exception("Driver JDBC não encontrado: " + e.getMessage());
+        // Verificação das variáveis de ambiente
+        if (url == null || url.trim().isEmpty()) {
+            throw new Exception("A variável de ambiente DB_URL não foi definida!");
         }
-        
+
+        if (user == null || user.trim().isEmpty()) {
+            throw new Exception("A variável de ambiente DB_USER não foi definida!");
+        }
+
+        if (password == null || password.trim().isEmpty()) {
+            throw new Exception("A variável de ambiente DB_PASSWORD não foi definida!");
+        }
+
         // Tentativa de conexão
-        try (Connection conexao = DriverManager.getConnection(url, usuario, senha)) {
+        try (Connection conexao = DriverManager.getConnection(url, user, password)) {
             System.out.println("Conectado com sucesso ao banco de dados!");
 
             // Criar tabela se não existir
