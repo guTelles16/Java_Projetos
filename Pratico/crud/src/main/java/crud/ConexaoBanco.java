@@ -5,8 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexaoBanco {
-    
-    // Metodo reutilizável para obter conexão ao banco com validações
     public static Connection conectar() throws Exception {
         String url = System.getenv("DB_URL");
         String user = System.getenv("DB_USER");
@@ -26,7 +24,8 @@ public class ConexaoBanco {
         }
 
         // Tentativa de conexão com o banco de dados
-        try (Connection conexao = DriverManager.getConnection(url, user, password)) {  
+        try {
+            Connection conexao = DriverManager.getConnection(url, user, password);  
             System.out.println("Conexão estabelecida com sucesso!");
             return conexao;
         } catch (SQLException e) {

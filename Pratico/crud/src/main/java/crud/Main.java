@@ -24,16 +24,16 @@ public class Main {
             //Deletando
             dao.deletarPessoa(1);
 
-            // Fechando conexão
-            dao.fecharConexao();
+            System.out.println("Saindo do programa...até logo!");
         } catch (SQLException e) {
-            throw new Exception("Erro no banco de dados: " + e.getMessage());
+            System.err.println("Erro no banco de dados: " + e.getMessage());
         
         } catch (IllegalArgumentException e) {
-            throw new Exception("Erro de validação: " + e.getMessage());
+            System.err.println("Erro de validação: " + e.getMessage());
         
         } catch (Exception e) {
-            throw new Exception("Erro: " + e.getMessage());
+            System.out.println("Erro fatal de inicialização do sistema: " + e.getMessage());
+            System.out.println("Por favor, verifique a conexão com o banco de dados e as configurações!");;
         }
     }
 }
