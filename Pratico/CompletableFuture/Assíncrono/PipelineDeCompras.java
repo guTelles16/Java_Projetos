@@ -1,7 +1,7 @@
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class Assincrono1 {
+public class PipelineDeCompras {
     public static void main(String[] args) {
         System.out.println("Iniciando a busca de preço dos produtos...");
         long inicio = System.currentTimeMillis();

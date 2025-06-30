@@ -1,8 +1,8 @@
 import java.util.concurrent.TimeUnit;
 
-public class Sincrono {
+public class Compras {
     public static void main(String[] args) {
-        System.out.println("Iniciando a busca dos produtos...");
+        System.out.println("Iniciando a busca de preço dos produtos...");
         long inicio = System.currentTimeMillis();
         
         // Buscando o preço do primeiro produto
